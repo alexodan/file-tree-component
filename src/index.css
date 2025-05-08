@@ -1,0 +1,91 @@
+:root {
+  --identation: 40px;
+  --background: cornsilk;
+  --font: Consolas, "Courier New", monospace;
+  --icon-color: black;
+  --lines-color: black;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0f141a;
+    --color: #b3905e;
+    --icon-color: cornsilk;
+    --lines-color: cornsilk;
+  }
+}
+
+body {
+  background-color: var(--background);
+  color: var(--color);
+  font-family: var(--font);
+}
+
+ul {
+  padding-left: var(--identation);
+}
+
+li {
+  display: block;
+  list-style-type: none;
+  position: relative;
+}
+
+.btn {
+  all: initial;
+  color: var(--icon-color);
+}
+
+.btn {
+  transition: transform 0.15s ease-out;
+  border-radius: 100%;
+  font-size: 12px;
+}
+
+.btn.opened {
+  transition: transform 0.25s ease-in;
+  transform: rotate(90deg);
+}
+
+/* vertical line */
+.folder .folder::before,
+.folder .file::before {
+  display: block;
+  content: "";
+  height: 100%;
+  width: 1px;
+  background: var(--lines-color);
+  position: absolute;
+  left: calc(-1 * var(--identation) + 4px);
+}
+
+.folder .folder::after,
+.folder .file::after {
+  display: block;
+  content: "";
+  height: 1px;
+  width: calc(var(--identation) - 4px);
+  background: var(--lines-color);
+  position: absolute;
+  left: calc(-1 * var(--identation) + 4px);
+}
+
+.folder .folder::after {
+  top: 10px;
+}
+
+.folder .file::after {
+  top: 50%;
+}
+
+.folder {
+  /* color: red; */
+}
+
+.file {
+  /* color: blue; */
+}
+
+.file-name {
+  margin-left: 12px;
+}
