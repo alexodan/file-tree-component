@@ -20,6 +20,10 @@ export const filetree: File[] = [
         ],
       },
       {
+        name: "constants",
+        type: "folder",
+      },
+      {
         name: "public",
         type: "folder",
         nodes: [
