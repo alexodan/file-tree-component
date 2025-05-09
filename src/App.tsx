@@ -23,7 +23,7 @@ function Node(props: NodeProps) {
           ▶︎
         </button>
       ) : null}
-      {children} {node.nodes && `(${node.nodes.length})`}
+      {children}
     </li>
   );
 }
@@ -51,7 +51,9 @@ function TreeView({ tree, defaultOpen }: TreeViewProps) {
                 isOpen={isOpen}
                 onToggleExpand={handleToggleExpand}
               >
-                <span className="file-name">🗂️ {node.name}</span>
+                <span className="file-name">
+                  🗂️ {node.name} {`(${node.nodes?.length ?? 0})`}
+                </span>
                 {isOpen && <TreeView tree={node.nodes ?? []} />}
               </Node>
             </>
