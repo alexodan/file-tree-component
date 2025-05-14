@@ -57,6 +57,7 @@ function TreeView({ tree }: TreeViewProps) {
                 //     ? `${(node.nodes?.length ?? 0) * 20}px`
                 //     : "0",
                 // }}
+                // TODO: current animation doesnt work cuz height goes from 0 to whatever without anything in the middle
                 data-is-closed={!isOpen[node.name]}
                 data-is-animating={isOpen[node.name] && isAnimationInProgress}
                 data-is-open={isOpen[node.name] && !isAnimationInProgress}
