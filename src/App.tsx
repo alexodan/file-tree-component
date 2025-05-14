@@ -1,49 +1,87 @@
-import { useState } from "react";
+import { PropsWithChildren, useState } from "react";
 import { type File, filetree } from "./constants.ts";
 import "./index.css";
 
-function Node(props: { node: File }) {
-  const { node } = props;
-  const type = node.type;
-  const [isExpanded, setIsExpanded] = useState(false);
+// TODO: Add Generics to add onToggleExpand based on node type
+type NodeProps = PropsWithChildren<{
+  node: File;
+  isOpen: boolean;
+  onToggleExpand?: () => void;
+}>;
 
-  const toggleExpand = () => {
-    setIsExpanded((p) => !p);
-  };
+function Node(props: NodeProps) {
+  const { children, node, isOpen, onToggleExpand } = props;
 
-  return type === "folder" ? (
-    <li className="folder">
-      <button
-        // aria-active, aria-expanded
-        aria-label={isExpanded ? "close" : "open"}
-        onClick={toggleExpand}
-        className={`btn ${isExpanded ? "opened" : "closed"}`}
-      >
-        ▶︎
-      </button>
-      <span className="file-name">📁 {node.name}</span>
-      {isExpanded && (
-        <ul>
-          {node.nodes?.map((n) => (
-            <Node key={n.name} node={n} />
-          ))}
-        </ul>
-      )}
-    </li>
-  ) : (
-    <li className="file">
-      <span className="file-name">
-        🗃️ {node.name}.{node.type}
-      </span>
+  return (
+    <li className={node.type === "folder" ? "folder" : "file"}>
+      {node.type === "folder" ? (
+        <button
+          // aria-active, aria-expanded
+          aria-label={isOpen ? "close" : "open"}
+          onClick={() => onToggleExpand?.()}
+          className={`btn ${isOpen ? "opened" : "closed"}`}
+        >
+          ▶︎
+        </button>
+      ) : null}
+      {children}
     </li>
   );
 }
 
-function TreeView({ tree }: { tree: File[] }) {
+export type TreeViewProps = {
+  tree: File[];
+  defaultOpen?: boolean;
+};
+
+function TreeView({ tree, defaultOpen }: TreeViewProps) {
+  // const [isOpen, setIsOpen] = useState(defaultOpen ?? false);
+  const [isOpen, setIsOpen] = useState<Record<string, boolean>>({});
+  console.log(isOpen);
+
+  const handleToggleExpand = (id: string) => {
+    // setIsOpen((op) => !op);
+    setIsOpen((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
   return (
-    <ul className="tree-root">
+    <ul className={`tree`}>
       {tree.map((node) => {
-        return <Node key={node.name} node={node} />;
+        if (node.type === "folder") {
+          return (
+            <Node
+              key={node.name}
+              node={node}
+              isOpen={isOpen[node.name]}
+              onToggleExpand={() => handleToggleExpand(node.name)}
+            >
+              <span className="file-name">
+                🗂️ {node.name} {`(${node.nodes?.length ?? 0})`}
+              </span>
+              <div
+                className="tree-wrap"
+                style={{
+                  height: isOpen[node.name]
+                    ? `${(node.nodes?.length ?? 0) * 20}px`
+                    : "0",
+                }}
+                // pass inlines
+              >
+                {isOpen[node.name] && <TreeView tree={node.nodes ?? []} />}
+              </div>
+            </Node>
+          );
+        }
+        return (
+          <Node key={node.name} node={node} isOpen={isOpen[node.name]}>
+            <span className="file-name">
+              🗃️ {node.name}.{node.type}
+            </span>
+          </Node>
+        );
       })}
     </ul>
   );
@@ -52,7 +90,7 @@ function TreeView({ tree }: { tree: File[] }) {
 function App() {
   return (
     <>
-      <TreeView tree={filetree} />
+      <TreeView tree={filetree} defaultOpen />
     </>
   );
 }
