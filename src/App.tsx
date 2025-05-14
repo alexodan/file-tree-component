@@ -2,10 +2,11 @@ import { PropsWithChildren, useState } from "react";
 import { type File, filetree } from "./constants.ts";
 import "./index.css";
 
+// TODO: Add Generics to add onToggleExpand based on node type
 type NodeProps = PropsWithChildren<{
   node: File;
   isOpen: boolean;
-  onToggleExpand: () => void;
+  onToggleExpand?: () => void;
 }>;
 
 function Node(props: NodeProps) {
@@ -17,7 +18,7 @@ function Node(props: NodeProps) {
         <button
           // aria-active, aria-expanded
           aria-label={isOpen ? "close" : "open"}
-          onClick={() => onToggleExpand()}
+          onClick={() => onToggleExpand?.()}
           className={`btn ${isOpen ? "opened" : "closed"}`}
         >
           ▶︎
@@ -34,10 +35,16 @@ export type TreeViewProps = {
 };
 
 function TreeView({ tree, defaultOpen }: TreeViewProps) {
-  const [isOpen, setIsOpen] = useState(defaultOpen ?? false);
+  // const [isOpen, setIsOpen] = useState(defaultOpen ?? false);
+  const [isOpen, setIsOpen] = useState<Record<string, boolean>>({});
+  console.log(isOpen);
 
-  const handleToggleExpand = () => {
-    setIsOpen((op) => !op);
+  const handleToggleExpand = (id: string) => {
+    // setIsOpen((op) => !op);
+    setIsOpen((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
   };
 
   return (
@@ -45,22 +52,31 @@ function TreeView({ tree, defaultOpen }: TreeViewProps) {
       {tree.map((node) => {
         if (node.type === "folder") {
           return (
-            <>
-              <Node
-                node={node}
-                isOpen={isOpen}
-                onToggleExpand={handleToggleExpand}
+            <Node
+              key={node.name}
+              node={node}
+              isOpen={isOpen[node.name]}
+              onToggleExpand={() => handleToggleExpand(node.name)}
+            >
+              <span className="file-name">
+                🗂️ {node.name} {`(${node.nodes?.length ?? 0})`}
+              </span>
+              <div
+                className="tree-wrap"
+                style={{
+                  height: isOpen[node.name]
+                    ? `${(node.nodes?.length ?? 0) * 20}px`
+                    : "0",
+                }}
+                // pass inlines
               >
-                <span className="file-name">
-                  🗂️ {node.name} {`(${node.nodes?.length ?? 0})`}
-                </span>
-                {isOpen && <TreeView tree={node.nodes ?? []} />}
-              </Node>
-            </>
+                {isOpen[node.name] && <TreeView tree={node.nodes ?? []} />}
+              </div>
+            </Node>
           );
         }
         return (
-          <Node node={node} isOpen={isOpen} onToggleExpand={handleToggleExpand}>
+          <Node key={node.name} node={node} isOpen={isOpen[node.name]}>
             <span className="file-name">
               🗃️ {node.name}.{node.type}
             </span>
