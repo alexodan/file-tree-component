@@ -1,10 +1,6 @@
-export type File = {
-  name: string;
-  type: string;
-  nodes?: File[];
-};
+import { TreeItem } from "./types";
 
-export const filetree: File[] = [
+export const filetree: TreeItem[] = [
   {
     name: "src",
     type: "folder",
@@ -55,4 +51,4 @@ export const filetree: File[] = [
     name: "readme",
     type: "md",
   },
-];
+] as const;

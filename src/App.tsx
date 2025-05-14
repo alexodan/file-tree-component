@@ -1,41 +1,17 @@
-import { PropsWithChildren, useState } from "react";
-import { type File, filetree } from "./constants.ts";
+import { useState } from "react";
+import { filetree } from "./constants.ts";
+import { Node } from "./TreeNode.tsx";
+import { isFolder } from "./utils.ts";
+import { TreeItem } from "./types.ts";
+
 import "./index.css";
 
-// TODO: Add Generics to add onToggleExpand based on node type
-type NodeProps = PropsWithChildren<{
-  node: File;
-  isOpen: boolean;
-  onToggleExpand?: () => void;
-}>;
-
-function Node(props: NodeProps) {
-  const { children, node, isOpen, onToggleExpand } = props;
-
-  return (
-    <li className={node.type === "folder" ? "folder" : "file"}>
-      {node.type === "folder" ? (
-        <button
-          // aria-active, aria-expanded
-          aria-label={isOpen ? "close" : "open"}
-          onClick={() => onToggleExpand?.()}
-          className={`btn ${isOpen ? "opened" : "closed"}`}
-        >
-          ▶︎
-        </button>
-      ) : null}
-      {children}
-    </li>
-  );
-}
-
 export type TreeViewProps = {
-  tree: File[];
+  tree: TreeItem[];
   defaultOpen?: boolean;
 };
 
-function TreeView({ tree, defaultOpen }: TreeViewProps) {
-  // const [isOpen, setIsOpen] = useState(defaultOpen ?? false);
+function TreeView({ tree }: TreeViewProps) {
   const [isOpen, setIsOpen] = useState<Record<string, boolean>>({});
   console.log(isOpen);
 
@@ -50,7 +26,7 @@ function TreeView({ tree, defaultOpen }: TreeViewProps) {
   return (
     <ul className={`tree`}>
       {tree.map((node) => {
-        if (node.type === "folder") {
+        if (isFolder(node)) {
           return (
             <Node
               key={node.name}
