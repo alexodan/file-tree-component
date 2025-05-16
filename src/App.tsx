@@ -51,13 +51,11 @@ function TreeView({ tree, className, animateStyles }: TreeViewProps) {
               <span className="file-name">
                 🗂️ {node.name} {`(${node.nodes?.length ?? 0})`}
               </span>
-              {isOpen[node.name] && (
-                <TreeView
-                  className={`tree-wrap ${isOpen ? "open" : ""}`}
-                  tree={node.nodes ?? []}
-                  animateStyles={animateStyles}
-                />
-              )}
+              <TreeView
+                className={`tree-wrap ${isOpen[node.name] ? "open" : ""}`}
+                tree={node.nodes ?? []}
+                animateStyles={animateStyles}
+              />
             </TreeNode>
           );
         }

@@ -17,7 +17,7 @@
 }
 
 .tree-wrap.open {
-  height: var(--end);
+  height: var(--animate);
 }
 
 @media (prefers-color-scheme: dark) {
