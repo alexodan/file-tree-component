@@ -4,26 +4,20 @@
   --font: Consolas, "Courier New", monospace;
   --icon-color: black;
   --lines-color: black;
-  --collapse-transition-duration: 5s;
+  --collapse-transition-duration: 1s;
 }
 
 .tree-wrap {
   outline: 1px dashed red;
-  height: 0;
+  height: var(--start);
   overflow: hidden;
-  display: flex;
-  align-items: flex-end;
+  /* display: flex;
+  align-items: flex-end; */
   transition: height var(--collapse-transition-duration) ease-out;
 }
 
-.tree-wrap[data-is-closed="true"] {
-  height: 0;
-}
-.tree-wrap[data-is-animating="true"] {
-  height: 1px;
-}
-.tree-wrap[data-is-open="true"] {
-  height: auto;
+.tree-wrap.open {
+  height: var(--end);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -81,6 +75,11 @@ li {
   background: var(--lines-color);
   position: absolute;
   left: calc(-1 * var(--identation) + 4px);
+}
+
+.folder .folder:last-child::before,
+.folder .file:last-child::before {
+  height: 10px;
 }
 
 .folder .folder::after,

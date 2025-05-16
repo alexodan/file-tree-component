@@ -12,7 +12,7 @@ type NodeProps<T extends TreeItem> = PropsWithChildren<
     : { onToggleExpand?: never })
 >;
 
-export function Node<T extends TreeItem>(props: NodeProps<T>) {
+export function TreeNode<T extends TreeItem>(props: NodeProps<T>) {
   const { children, node, isOpen, onToggleExpand } = props;
 
   return (
