@@ -5,6 +5,7 @@ import { isFolder } from "./utils.ts";
 import { TreeItem } from "./types.ts";
 
 import "./index.css";
+import { Motion } from "./Motion.tsx";
 
 export type TreeViewProps = {
   tree: TreeItem[];
@@ -13,7 +14,6 @@ export type TreeViewProps = {
 
 function TreeView({ tree }: TreeViewProps) {
   const [isOpen, setIsOpen] = useState<Record<string, boolean>>({});
-  console.log(isOpen);
 
   const handleToggleExpand = (id: string) => {
     // setIsOpen((op) => !op);
@@ -37,17 +37,9 @@ function TreeView({ tree }: TreeViewProps) {
               <span className="file-name">
                 🗂️ {node.name} {`(${node.nodes?.length ?? 0})`}
               </span>
-              <div
-                className="tree-wrap"
-                style={{
-                  height: isOpen[node.name]
-                    ? `${(node.nodes?.length ?? 0) * 20}px`
-                    : "0",
-                }}
-                // pass inlines
-              >
-                {isOpen[node.name] && <TreeView tree={node.nodes ?? []} />}
-              </div>
+              <Motion id={node.name} isOpen={isOpen[node.name]}>
+                <TreeView tree={node.nodes ?? []} />
+              </Motion>
             </Node>
           );
         }

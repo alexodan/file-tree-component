@@ -8,11 +8,11 @@
 
 .tree-wrap {
   outline: 1px dashed red;
-  height: 0;
+  /* height: 0; */
   overflow: hidden;
   display: flex;
   align-items: flex-end;
-  transition: height 0.25s ease-out;
+  transition: height 1s ease-out;
 }
 
 @media (prefers-color-scheme: dark) {
