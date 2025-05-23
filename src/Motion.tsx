@@ -7,16 +7,36 @@ type Props = PropsWithChildren<{
 
 export function Motion(props: Props) {
   const { id, children, isOpen } = props;
-  const [height, setHeight] = useState(0);
+  const [height, setHeight] = useState<number | undefined>(0);
   const treeRef = useRef<HTMLDivElement>(null);
+  const [animationEnded, setAnimationEnded] = useState(false);
+
+  const isChildrenVisible = isOpen || !animationEnded;
 
   useEffect(() => {
-    const child = treeRef.current?.children[0];
-    const height = child?.getBoundingClientRect().height;
-    if (height && isOpen) {
-      setHeight(height);
-    }
+    setAnimationEnded(false);
   }, [isOpen]);
+
+  //opens
+  useEffect(() => {
+    const child = treeRef.current?.children[0];
+    const newHeight = child?.getBoundingClientRect().height;
+    if (child && height === 0 && newHeight && isOpen) {
+      setHeight(newHeight);
+    }
+  }, [isOpen, height]);
+
+  // close
+  useEffect(() => {
+    if (isChildrenVisible && height === undefined && !isOpen) {
+      const child = treeRef.current?.children[0];
+      const newHeight = child?.getBoundingClientRect().height;
+      setHeight(newHeight);
+      setTimeout(() => {
+        setHeight(0);
+      }, 100);
+    }
+  }, [height, isOpen, isChildrenVisible]);
 
   if (id === "src") {
     console.log(height);
@@ -27,25 +47,18 @@ export function Motion(props: Props) {
       className="tree-wrap"
       ref={treeRef}
       style={{
-        height: !isOpen ? 0 : height,
+        height,
       }}
-      // there is no transition happening that's why this doesnt trigger
-      // for a fraction put the height back on close
       onTransitionEnd={(e) => {
-        // e.stopPropagation
         if (e.propertyName === "height") {
-          if (id === "src") {
-            console.log("end", e);
-          }
-          //   setHeight(undefined);
-          // before transition
           if (isOpen) {
             setHeight(undefined);
           }
+          setAnimationEnded(true);
         }
       }}
     >
-      {isOpen ? children : null}
+      {isChildrenVisible && children}
     </div>
   );
 }

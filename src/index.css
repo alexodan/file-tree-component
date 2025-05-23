@@ -8,7 +8,6 @@
 
 .tree-wrap {
   outline: 1px dashed red;
-  /* height: 0; */
   overflow: hidden;
   display: flex;
   align-items: flex-end;
